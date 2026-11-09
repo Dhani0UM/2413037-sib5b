@@ -18,38 +18,38 @@ class Mario {
     }
 
 
-    eatSuperMushroom(): void {
-        this.currentForm = "super mario";
-        this.hp += 1;
-        console.log(`${this.name} memakan Super Mushroom! Menjadi Super Mario. HP: ${this.hp}`);
+    eatSuperMushroom(): Mario {
+        const hasil = new SuperMario(this.name, this.hp + 1, this.speed, this.positionX, this.positionY, this.invincible);
+        console.log(`${this.name} memakan Super Mushroom! Menjadi Super Mario. HP: ${hasil.hp}`);
+        return hasil;
     }
 
-  
-    eatFireFlower(): void {
-        this.currentForm = "fire mario";
-        this.hp += 1;
-        console.log(`${this.name} memakan Fire Flower! Menjadi Fire Mario. HP: ${this.hp}`);
+
+    eatFireFlower(): Mario {
+        const hasil = new FireMario(this.name, this.hp + 1, this.speed, this.positionX, this.positionY, this.invincible);
+        console.log(`${this.name} memakan Fire Flower! Menjadi Fire Mario. HP: ${hasil.hp}`);
+        return hasil;
     }
 
-  
+
     getSuperStar(): void {
         this.invincible = true;
         console.log(`${this.name} mendapatkan Super Star! Sekarang kebal.`);
     }
 
-   
-    takeDamage(): void {
+
+    takeDamage(): Mario {
         if (this.invincible) {
             console.log(`${this.name} sedang kebal! Serangan tidak berpengaruh.`);
-            return;
+            return this;
         }
 
-        this.hp -= 1;
-        this.currentForm = "mario";
-        console.log(`${this.name} diserang! HP: ${this.hp}, kembali ke form Mario.`);
+        const hasil = new Mario(this.name, this.hp - 1, this.speed, this.positionX, this.positionY, this.invincible);
+        console.log(`${this.name} diserang! HP: ${hasil.hp}, kembali ke form Mario.`);
+        return hasil;
     }
 
-  
+
     moveRight(): number {
         this.positionX += this.speed;
         console.log(`${this.name} bergerak ke kanan. Posisi X: ${this.positionX}`);
@@ -65,20 +65,38 @@ class Mario {
 
 
     shootFireball(): void {
-        if (this.currentForm === "fire mario") {
-            console.log(`${this.name} menembakkan bola api!`);
-        } else {
-            console.log(`${this.name} belum bisa menembak bola api.`);
-        }
+        console.log(`${this.name} belum bisa menembak bola api.`);
     }
 
-    
+    status(): string {
+        return `${this.name} | Form: ${this.currentForm} | HP: ${this.hp} | Speed: ${this.speed} | Pos: (${this.positionX}, ${this.positionY}) | Invincible: ${this.invincible}`;
+    }
 }
 
 
-const mario = new Mario();
+class SuperMario extends Mario {
+    constructor( name: string = "Mario", hp: number = 2, speed: number = 5, positionX: number = 0, positionY: number = 0, invincible: boolean = false) {
+        super(name, hp, speed, positionX, positionY, invincible, "super mario");
+    }
+}
 
-mario.eatFireFlower();
+
+class FireMario extends Mario {
+    constructor( name: string = "Mario", hp: number = 2, speed: number = 5, positionX: number = 0, positionY: number = 0, invincible: boolean = false) {
+        super(name, hp, speed, positionX, positionY, invincible, "fire mario");
+    }
+
+    shootFireball(): void {
+        console.log(`${this.name} menembakkan bola api!`);
+    }
+}
+
+
+let mario: Mario = new Mario();
+
+console.log(mario.status());
+mario = mario.eatFireFlower();
 mario.shootFireball();
 mario.moveRight();
-mario.takeDamage();
+mario = mario.takeDamage();
+console.log(mario.status());
